@@ -315,6 +315,8 @@ class PhoneInput extends React.Component {
     } else {
       newSelectedCountry = onlyCountries.find(o => o.iso2 == country);
     }
+    // * Short-circuit to prevent input clearing
+    return
     if (newSelectedCountry && newSelectedCountry.dialCode) {
       this.setState({
         selectedCountry: newSelectedCountry,
@@ -340,10 +342,12 @@ class PhoneInput extends React.Component {
       this.setState({ formattedNumber });
     }
     else {
-      if (this.props.disableCountryGuess) { newSelectedCountry = selectedCountry; }
+      // * Use freezeSelection to prevent initial country being overriden by guessSelectedCountry
+      if (this.props.disableCountryGuess || this.state.freezeSelection) { newSelectedCountry = selectedCountry; this.setState({ freezeSelection: false }) }
       else {
         newSelectedCountry = this.guessSelectedCountry(inputNumber.substring(0, 6), country, onlyCountries, hiddenAreaCodes) || selectedCountry;
       }
+
       const dialCode = newSelectedCountry && startsWith(inputNumber, prefix + newSelectedCountry.dialCode) ? newSelectedCountry.dialCode : '';
 
       formattedNumber = this.formatNumber(
@@ -466,12 +470,14 @@ class PhoneInput extends React.Component {
 
   // Put the cursor to the end of the input (usually after a focus event)
   cursorToEnd = () => {
-    const input = this.numberInputRef;
-    if (document.activeElement !== input) return;
-    input.focus();
-    let len = input.value.length;
-    if (input.value.charAt(len - 1) === ')') len = len - 1;
-    input.setSelectionRange(len, len);
+    // * SiLlY FuNcTiOn * //
+
+    // const input = this.numberInputRef;
+    // if (document.activeElement !== input) return;
+    // input.focus();
+    // let len = input.value.length;
+    // if (input.value.charAt(len - 1) === ')') len = len - 1;
+    // input.setSelectionRange(len, len);
   }
 
   getElement = (index) => {
