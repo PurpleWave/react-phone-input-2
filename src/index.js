@@ -201,7 +201,7 @@ class PhoneInput extends React.Component {
     }
 
     const dialCode = (
-      inputNumber.length < 2 &&
+      // inputNumber.length < 2 && // ? Logic flipped and makes no sense (in our case)
       countryGuess &&
       !startsWith(inputNumber, countryGuess.dialCode)
     ) ? countryGuess.dialCode : '';
